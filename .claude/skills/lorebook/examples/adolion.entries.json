@@ -1,0 +1,27 @@
+{
+  "name": "The Fantasy World of Adolion",
+  "description": "Comprehensive lorebook covering the world, locations, and organizations of Adolion. All canon, full spoilers.",
+  "entries": [
+    {
+      "name": "Adolion",
+      "keys": ["Adolion"],
+      "content": "Adolion is a large fantasy world. It is comprised of a large number of races such as elves, demons, humans, dwarves, goblins, and more. It has medieval technology, magic, and monsters.",
+      "category": "world",
+      "tier": 1
+    },
+    {
+      "name": "Aegis City",
+      "keys": ["Aegis City", "Aegis", "Holy City"],
+      "content": "Aegis City is the capital city of the Darran Kingdom. It is the largest city on the continent of Sebela. Its ruler is King Davolan. It is otherwise known as the Holy City.",
+      "category": "location",
+      "tier": 1
+    },
+    {
+      "name": "Adventurer's Guild",
+      "keys": ["Adventurer's Guild", "The Guild", "Guild"],
+      "content": "The Adventurer's Guild is an organization that manages the many adventurers in Adolion. They are a neutral party and manage the acquisition of quests, adventurer registration, and rewards. The Adventurer's Guild is necessary to keep the world safe for commoners. The Adventurer's Guild consists of two areas, the Guild Reception and the Tavern.",
+      "category": "faction",
+      "tier": 1
+    }
+  ]
+}

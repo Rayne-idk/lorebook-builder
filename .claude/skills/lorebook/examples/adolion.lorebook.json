@@ -1,0 +1,154 @@
+{
+  "name": "The Fantasy World of Adolion",
+  "description": "Comprehensive lorebook covering the world, locations, and organizations of Adolion. All canon, full spoilers.",
+  "is_creation": false,
+  "scan_depth": 4,
+  "token_budget": 512,
+  "recursive_scanning": false,
+  "extensions": {
+    "chub": {
+      "expressions": null,
+      "alt_expressions": null,
+      "id": 0,
+      "full_path": "",
+      "related_lorebooks": [],
+      "background_image": "",
+      "preset": null,
+      "extensions": [],
+      "custom_css": null
+    }
+  },
+  "entries": {
+    "1": {
+      "uid": 1,
+      "key": [
+        "Adolion"
+      ],
+      "keysecondary": [],
+      "comment": "Adolion",
+      "content": "Adolion is a large fantasy world. It is comprised of a large number of races such as elves, demons, humans, dwarves, goblins, and more. It has medieval technology, magic, and monsters.",
+      "constant": false,
+      "selective": true,
+      "selectiveLogic": 0,
+      "order": 100,
+      "position": 1,
+      "disable": false,
+      "addMemo": true,
+      "excludeRecursion": true,
+      "probability": 100,
+      "displayIndex": 0,
+      "useProbability": true,
+      "secondary_keys": [],
+      "keys": [
+        "Adolion"
+      ],
+      "id": 1,
+      "priority": 10,
+      "insertion_order": 100,
+      "enabled": true,
+      "name": "Adolion",
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 0,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "case_sensitive": false,
+      "depth": 4,
+      "characterFilter": null
+    },
+    "2": {
+      "uid": 2,
+      "key": [
+        "Aegis City",
+        "Aegis",
+        "Holy City"
+      ],
+      "keysecondary": [],
+      "comment": "Aegis City",
+      "content": "Aegis City is the capital city of the Darran Kingdom. It is the largest city on the continent of Sebela. Its ruler is King Davolan. It is otherwise known as the Holy City.",
+      "constant": false,
+      "selective": true,
+      "selectiveLogic": 0,
+      "order": 100,
+      "position": 1,
+      "disable": false,
+      "addMemo": true,
+      "excludeRecursion": true,
+      "probability": 100,
+      "displayIndex": 1,
+      "useProbability": true,
+      "secondary_keys": [],
+      "keys": [
+        "Aegis City",
+        "Aegis",
+        "Holy City"
+      ],
+      "id": 2,
+      "priority": 10,
+      "insertion_order": 100,
+      "enabled": true,
+      "name": "Aegis City",
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 1,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "case_sensitive": false,
+      "depth": 4,
+      "characterFilter": null
+    },
+    "3": {
+      "uid": 3,
+      "key": [
+        "Adventurer's Guild",
+        "The Guild",
+        "Guild"
+      ],
+      "keysecondary": [],
+      "comment": "Adventurer's Guild",
+      "content": "The Adventurer's Guild is an organization that manages the many adventurers in Adolion. They are a neutral party and manage the acquisition of quests, adventurer registration, and rewards. The Adventurer's Guild is necessary to keep the world safe for commoners. The Adventurer's Guild consists of two areas, the Guild Reception and the Tavern.",
+      "constant": false,
+      "selective": true,
+      "selectiveLogic": 0,
+      "order": 100,
+      "position": 1,
+      "disable": false,
+      "addMemo": true,
+      "excludeRecursion": true,
+      "probability": 100,
+      "displayIndex": 2,
+      "useProbability": true,
+      "secondary_keys": [],
+      "keys": [
+        "Adventurer's Guild",
+        "The Guild",
+        "Guild"
+      ],
+      "id": 3,
+      "priority": 10,
+      "insertion_order": 100,
+      "enabled": true,
+      "name": "Adventurer's Guild",
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 2,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "case_sensitive": false,
+      "depth": 4,
+      "characterFilter": null
+    }
+  }
+}

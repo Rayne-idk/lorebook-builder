@@ -1,0 +1,10 @@
+# Per-universe research working files (manifests, raw wiki scrapes, intermediate entries)
+research/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
