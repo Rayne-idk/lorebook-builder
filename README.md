@@ -5,6 +5,10 @@ through its wikis and produces a comprehensive **SillyTavern / Chub-format loreb
 Info) — characters, locations, factions, races, history, and lore, all written from real wiki
 sources.
 
+> **Compatibility:** built and tested against Claude Code. The skill is plain markdown
+> (instructions + a standalone Python script), so it should be portable to other agent
+> frameworks with a similar skills/tools mechanism — but that has not been tried.
+
 ## ⚠️ Token usage warning
 
 **Running `/lorebook` consumes a very large number of tokens.** This is inherent to the task,
@@ -19,7 +23,9 @@ a long time to finish. Keep this in mind before pointing it at a huge, long-runn
 - [Claude Code](https://claude.com/claude-code)
 - Python 3 (standard library only — used by the build/validate script)
 - Firecrawl skills configured (preferred research path); falls back to built-in
-  WebSearch/WebFetch if unavailable, but is slower and less thorough
+  WebSearch/WebFetch if unavailable, but is slower and less thorough. Firecrawl's
+  [free trial](https://www.firecrawl.dev/) covers a generous number of scrapes, which is enough
+  to get started without a paid plan.
 
 ## Usage
 
