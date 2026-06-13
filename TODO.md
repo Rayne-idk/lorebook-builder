@@ -17,3 +17,4 @@
       `resume`/`continue` forces it, `fresh`/`rebuild` ignores it. Phases 3 (cached scrapes) and 4
       (skip existing fragment files, atomic writes) are idempotent, so a resume costs only the
       work left. Raw filenames use a canonical slug so reconciliation is deterministic.
+- [ ] lorebook-expand, lorebook-compress, lorebook-validate
