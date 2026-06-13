@@ -15,7 +15,7 @@ sources.
 not a bug: the model has to read through dozens to hundreds of wiki pages and condense an
 entire fictional universe into prose, then write 20–400+ dense lorebook entries from that
 research. A single run is comparable to summarizing a small book, and large/sprawling
-franchises (see the size bands in [WORKFLOW.md](WORKFLOW.md)) cost proportionally more and take
+franchises (see the size bands in [WORKFLOW_GENERAL.md](WORKFLOW_GENERAL.md)) cost proportionally more and take
 a long time to finish. Keep this in mind before pointing it at a huge, long-running series.
 
 With the current version of the skill, a full run (example:
