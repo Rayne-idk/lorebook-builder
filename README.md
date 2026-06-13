@@ -15,13 +15,13 @@ sources.
 not a bug: the model has to read through dozens to hundreds of wiki pages and condense an
 entire fictional universe into prose, then write 20–400+ dense lorebook entries from that
 research. A single run is comparable to summarizing a small book, and large/sprawling
-franchises (see the size bands in [WORKFLOW.md](WORKFLOW.md)) cost proportionally more and take
+franchises (see the size bands in [WORKFLOW_GENERAL.md](WORKFLOW_GENERAL.md)) cost proportionally more and take
 a long time to finish. Keep this in mind before pointing it at a huge, long-running series.
 
 With the current version of the skill, a full run (example:
 [`example-results/haiku.solo-leveling.lorebook.json`](example-results/haiku.solo-leveling.lorebook.json))
 used about 25% of a Claude Code Pro subscription's 5-hour usage budget, using Haiku as the
-model.
+model. Using Sonnet or even Opus will probably result in over 100% usage.
 
 ## Requirements
 
@@ -54,16 +54,14 @@ explicit count or scope. Defaults are full spoilers and all canon.
 
 The final lorebook is written to `output/<slug>.lorebook.json`:
 
-- **SillyTavern:** World Info panel → Import → select the file, then bind it globally, to a
-  character, or to a chat.
-- **Chub:** Create → Lorebook → Import.
+The lorebook is in a standard json format any you should be able to import it into SillyTavern, Marinara Engine, or whatever else you're using.
 
 Intermediate working files (entity manifest, raw scraped pages, hand-authored intermediate
 entries) are written to `research/<slug>/` for traceability and are not needed after the build.
 
 ## How it works
 
-See [WORKFLOW.md](WORKFLOW.md) for the full phased pipeline (source discovery, entity manifest,
+See [SKILL.md](.claude/skills/lorebook/SKILL.md) for the full phased pipeline (source discovery, entity manifest,
 research, writing, build, QA) and the design decisions behind it.
 
 ## Repo layout
