@@ -1,9 +1,21 @@
 # Lorebook JSON Format Specification (Chub / SillyTavern hybrid)
 
-Two formats matter in this pipeline:
+Three formats matter in this pipeline:
 
-1. **Intermediate format** (`entries.json`) — what the agent writes by hand during Phase 4.
-2. **Final format** (`*.lorebook.json`) — what `build_lorebook.py` emits. Never hand-write this.
+1. **Fragment format** (`fragments/*.json`) — one file per writer-subagent batch (Phase 4).
+2. **Intermediate format** (`entries.json`) — the merged book, produced by `build_lorebook.py merge`.
+3. **Final format** (`*.lorebook.json`) — what `build_lorebook.py build` emits. Never hand-write this.
+
+A writer subagent produces a **fragment**: a bare JSON list of entry objects (the same per-entry
+shape as §1 below), or an object `{"entries": [...]}`. `merge` concatenates all fragments in a
+directory, drops duplicate-named entries (warning on each), sorts them (world entry first, then by
+tier, then by name), and attaches the top-level `name`/`description` passed on the command line:
+
+```
+python build_lorebook.py merge research/<slug>/fragments -o research/<slug>/entries.json --name "<name>" --description "<desc>"
+```
+
+The resulting `entries.json` is exactly the §1 intermediate format, ready for `build`.
 
 ---
 
