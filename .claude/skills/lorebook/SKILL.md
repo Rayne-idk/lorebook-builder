@@ -30,21 +30,39 @@ output/<slug>.lorebook.json         final deliverable (script-built)
 
 ## Model strategy — read this first
 
-This skill spends most of its tokens on bulk, mechanical work: scraping dozens to hundreds of
-wiki pages and turning each into a short entry. None of that volume needs to sit in **this**
-(the orchestrator's) context, and most of it does not need a frontier model. So delegate by
-difficulty and keep the orchestrator thread thin.
+**One model for the whole run — the user's active model.** This skill leans hard on Anthropic's
+prompt caching: the orchestrator thread and every subagent share large, stable prefixes (these
+instructions, the rule files, repeated batch scaffolding), and the cache makes re-reading them
+nearly free. **Switching models mid-run throws all of that away** — each distinct model keeps its
+own cache, so every model switch re-writes the prefix from scratch and the token cost balloons.
+So this workflow deliberately runs *everything* — orchestrator and all subagents — on a single
+model: **whichever model the user currently has active.**
 
-Spawn work with the **Agent** tool (`subagent_type: general-purpose`, with an explicit `model`).
-A subagent starts cold — pass it everything it needs (paths, batch list, the rule files to read)
-and require it to **save its output to disk and return only a short status**, never the scraped
-or written text. That isolation is where the savings come from: the heavy tokens live in the
-subagent's context and on disk, not here.
+Concretely: when you spawn a subagent with the **Agent** tool (`subagent_type: general-purpose`),
+**do not pass a `model` override.** Omitting it makes the subagent inherit the orchestrator's
+(active) model, which is exactly what keeps the cache warm. Never set `model: haiku`,
+`model: sonnet`, etc. — a mixed-model run is the single biggest token waste here.
 
-| Work | Model | Why |
+> **Cost warning — check before you start.** If the active model is **Opus** or **Fable**, this
+> skill will run a large volume of bulk, mechanical work (mapping wikis, scraping dozens to
+> hundreds of pages, writing an entry per page) on a frontier model. That is **very expensive** —
+> this work was designed for Haiku/Sonnet-class models. At the start of Phase 0, before doing any
+> work, **warn the user**: tell them the active model is Opus/Fable, that a lorebook run will
+> consume a lot of frontier-model tokens, and recommend they switch to **Sonnet** (or **Haiku**
+> for the cheapest run) via `/model` and re-invoke. Proceed only if they confirm they want to
+> continue on the expensive model. Do not switch the model yourself — changing it mid-run is the
+> cache-busting problem above; the user must pick one model up front.
+
+Delegation still matters even with one model: this skill spends most of its tokens on bulk work
+that does **not** need to sit in the orchestrator's context. So delegate by isolation — keep the
+orchestrator thread thin and push the heavy tokens into subagents and onto disk. A subagent starts
+cold; pass it everything it needs (paths, batch list, the rule files to read) and require it to
+**save its output to disk and return only a short status**, never the scraped or written text.
+
+| Work | Runs on | Why delegate |
 |---|---|---|
-| Mapping a wiki, scraping pages to `raw/`, running the build script | **haiku** | Pure tool-calls-to-disk. No judgment; Firecrawl `-o` writes the file, the agent just checks it. |
-| Writing entries from `raw/` sources; QA fact-check; fixing lint warnings | **sonnet** | Bounded by the style guide + the sources. Good prose, not frontier reasoning. |
+| Mapping a wiki, scraping pages to `raw/`, running the build script | subagent (active model) | Pure tool-calls-to-disk; Firecrawl `-o` writes the file, the agent just checks it. Keeps page bytes out of the orchestrator. |
+| Writing entries from `raw/` sources; QA fact-check; fixing lint warnings | subagent (active model) | Bounded by the style guide + the sources. Keeps source/entry text out of the orchestrator. |
 | Intake/disambiguation, choosing the wiki & canon, **sizing**, **tiering**, warning triage, final report | orchestrator (this thread) | The irreducible judgment. Keep it here; do not delegate. |
 
 The biggest lever is **keeping web content out of *every* LLM context, not just this one.**
@@ -71,6 +89,11 @@ the script's stdout, and the handful of entries you personally spot-check.
 
 ## Phase 0 — Intake & resume check (orchestrator)
 
+0. **Cost check (see Model strategy).** If your active model is **Opus** or **Fable**, warn the
+   user now — before any scraping or sizing — that a lorebook run does a large amount of bulk work
+   and will be very expensive on a frontier model, and recommend switching to **Sonnet** (or
+   **Haiku**) via `/model` and re-invoking. Only continue if they confirm. Whatever single model
+   the run proceeds on, all subagents inherit it (never pass a `model` override).
 1. Parse the universe name from the arguments. If the name is ambiguous (matches multiple
    franchises, e.g. "Avatar"), ask the user which one via AskUserQuestion. This is the only
    blocking question in the workflow.
@@ -96,9 +119,10 @@ the script's stdout, and the handful of entries you personally spot-check.
    mention it in the final report — do not block on it.
 5. Create `research/<slug>/raw/`, `research/<slug>/map/`, and `research/<slug>/fragments/`.
 
-## Phase 1 — Source discovery (haiku scout → orchestrator decides)
+## Phase 1 — Source discovery (scout subagent → orchestrator decides)
 
-1. Dispatch a **haiku** subagent to find and map the wiki. Tell it to: search `"<universe> wiki"`
+1. Dispatch a **scout** subagent (active model, no `model` override) to find and map the wiki.
+   Tell it to: search `"<universe> wiki"`
    (firecrawl-search or WebSearch), preferring a dedicated Fandom / wiki.gg / Miraheze /
    independent wiki over general sites; map the chosen wiki **to a file**, never into its reply —
    `firecrawl map "<wiki>" --search "<category>" --limit <n> --json -o research/<slug>/map/<category>.json`
@@ -109,9 +133,10 @@ the script's stdout, and the handful of entries you personally spot-check.
 2. From that digest the orchestrator picks the authoritative wiki and confirms the category URLs.
    Record the chosen wiki and category URLs at the top of `manifest.md`.
 
-## Phase 2 — Entity manifest (haiku scrapes index pages → orchestrator sizes & tiers)
+## Phase 2 — Entity manifest (scraper subagent scrapes index pages → orchestrator sizes & tiers)
 
-1. Dispatch a **haiku** subagent to scrape the category/index pages and the wiki main page
+1. Dispatch a **scraper** subagent (active model, no `model` override) to scrape the
+   category/index pages and the wiki main page
    (`firecrawl scrape "<index-url>" --only-main-content -o research/<slug>/raw/_index-<category>.md`,
    or `--format links` when a page is just a link list) and **return an inventory digest**: for
    each category, the count of real *content* articles (ignore meta/template/file/category pages)
@@ -159,12 +184,13 @@ the script's stdout, and the handful of entries you personally spot-check.
 6. Print a one-paragraph manifest summary (derived target + reasoning, counts per category/tier,
    notable inclusions) and proceed. Do not wait for approval — the user can interrupt.
 
-## Phase 3 — Research (haiku scraper subagents, batched & parallel)
+## Phase 3 — Research (scraper subagents, batched & parallel)
 
 The orchestrator never scrapes in this phase — it dispatches and tracks status only.
 
 1. Split the `pending` manifest rows into batches of 5–10 entities. For each batch, spawn a
-   **haiku** subagent and give it the batch as `entity name | URL | entity-slug` lines, the output
+   **scraper** subagent (active model, no `model` override) and give it the batch as
+   `entity name | URL | entity-slug` lines, the output
    dir `research/<slug>/raw/`, and these instructions:
    - **Scrape straight to disk — the page text must never enter your context.** Run
      `firecrawl scrape "<url1>" "<url2>" … --only-main-content -o research/<slug>/raw/<entity-slug>.md`
@@ -187,7 +213,7 @@ The orchestrator never scrapes in this phase — it dispatches and tracks status
    to the manifest (a major faction the index missed) and queue them in a follow-up batch. Don't
    add tier-3 strays once the target count is reached.
 
-## Phase 4 — Write entries (sonnet writer subagents, batched & parallel → fragments)
+## Phase 4 — Write entries (writer subagents, batched & parallel → fragments)
 
 The orchestrator never writes entry prose in this phase — it dispatches and merges.
 
@@ -196,7 +222,8 @@ The orchestrator never writes entry prose in this phase — it dispatches and me
    deterministic — `research/<slug>/fragments/<NN-batch-label>.json` (e.g. `10-characters-t1.json`).
    **On a resume, skip any batch whose fragment file already exists** (writers save the fragment in
    one atomic Write, so a fragment is either complete or absent). For each remaining batch spawn a
-   **sonnet** subagent and give it: the batch's entities with their `category`, `tier`, and
+   **writer** subagent (active model, no `model` override) and give it: the batch's entities with
+   their `category`, `tier`, and
    `raw/<slug>.md` paths; instruction to **read `references/writing-style.md` and the listed `raw/`
    files first** (writers do *not* need `references/format.md` — that spec is for the build script,
    not the author); and the fragment output path. As each batch's fragment lands, mark its entities
@@ -216,7 +243,7 @@ The orchestrator never writes entry prose in this phase — it dispatches and me
    `name` follows `"The World of <Universe>"` or the universe's own styling (e.g.
    `"The Fantasy World of Adolion"`); `description` is 1–2 sentences stating coverage and canon scope.
 
-## Phase 5 — Merge & build (orchestrator runs script; sonnet fixes warnings)
+## Phase 5 — Merge & build (orchestrator runs script; subagent fixes warnings)
 
 1. Merge the fragments, then build:
 
@@ -228,22 +255,25 @@ The orchestrator never writes entry prose in this phase — it dispatches and me
 2. Read the script's stdout (this is cheap — read it directly). Fix every ERROR (rerun until
    clean). Triage every WARN against writing-style.md: oversized entries get trimmed, risky keys
    replaced or justified, shared keys disambiguated (§Key rule 5).
-3. Apply fixes by dispatching a **sonnet** subagent with the specific warnings and the affected
+3. Apply fixes by dispatching a subagent (active model, no `model` override) with the specific
+   warnings and the affected
    fragment file paths — it edits the fragments in place and returns a one-line summary. Then
    re-run `merge` and `build`. The orchestrator decides *what* to fix; the subagent does the editing.
 
-## Phase 6 — QA and delivery (sonnet QA subagent → orchestrator reports)
+## Phase 6 — QA and delivery (QA subagent → orchestrator reports)
 
 1. `python .claude/skills/lorebook/scripts/build_lorebook.py validate output/<slug>.lorebook.json`
    — must pass with no errors (orchestrator runs this and reads stdout).
-2. Dispatch one **sonnet** QA subagent to do the content checks against the sources and return a
+2. Dispatch one QA subagent (active model, no `model` override) to do the content checks against
+   the sources and return a
    short findings list (not the entry text):
    - **Fact spot-check:** pick 5 entries spanning tiers; verify each claim against the matching
      `raw/` file; report any discrepancy as `entry — claim — source says`.
    - **Trigger sanity:** for 5 entries, judge "would these keys actually appear in a chat about
      this topic, and would they fire on unrelated chat?"; report keys that should change.
-3. The orchestrator applies the QA fixes (directly for a one-liner, or via a sonnet fragment-edit
-   subagent for anything larger), then re-runs `merge` → `build` → `validate`.
+3. The orchestrator applies the QA fixes (directly for a one-liner, or via a fragment-edit
+   subagent — active model, no `model` override — for anything larger), then re-runs
+   `merge` → `build` → `validate`.
 4. Final report to the user: output path, entry count by category and tier, total token estimate,
    canon/spoiler scope chosen, sources used, entities dropped and why, and any remaining warnings
    that were accepted deliberately.
