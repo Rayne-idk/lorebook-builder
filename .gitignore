@@ -1,5 +1,6 @@
 # Per-universe research working files (manifests, raw wiki scrapes, intermediate entries)
 research/
+output/
 
 # Python
 __pycache__/
@@ -8,3 +9,6 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Firecrawl
+.firecrawl/

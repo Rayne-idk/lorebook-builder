@@ -18,6 +18,11 @@ research. A single run is comparable to summarizing a small book, and large/spra
 franchises (see the size bands in [WORKFLOW.md](WORKFLOW.md)) cost proportionally more and take
 a long time to finish. Keep this in mind before pointing it at a huge, long-running series.
 
+With the current version of the skill, a full run (example:
+[`example-results/haiku.solo-leveling.lorebook.json`](example-results/haiku.solo-leveling.lorebook.json))
+used about 25% of a Claude Code Pro subscription's 5-hour usage budget, using Haiku as the
+model.
+
 ## Requirements
 
 - [Claude Code](https://claude.com/claude-code)
