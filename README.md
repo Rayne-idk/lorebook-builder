@@ -54,16 +54,14 @@ explicit count or scope. Defaults are full spoilers and all canon.
 
 The final lorebook is written to `output/<slug>.lorebook.json`:
 
-- **SillyTavern:** World Info panel → Import → select the file, then bind it globally, to a
-  character, or to a chat.
-- **Chub:** Create → Lorebook → Import.
+The lorebook is in a standard json format any you should be able to import it into SillyTavern, Marinara Engine, or whatever else you're using.
 
 Intermediate working files (entity manifest, raw scraped pages, hand-authored intermediate
 entries) are written to `research/<slug>/` for traceability and are not needed after the build.
 
 ## How it works
 
-See [WORKFLOW.md](WORKFLOW.md) for the full phased pipeline (source discovery, entity manifest,
+See [SKILL.md](.claude/skills/lorebook/SKILL.md) for the full phased pipeline (source discovery, entity manifest,
 research, writing, build, QA) and the design decisions behind it.
 
 ## Repo layout
