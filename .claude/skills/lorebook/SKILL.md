@@ -235,10 +235,10 @@ The orchestrator never writes entry prose in this phase — it dispatches and me
    world/character/location/faction/race/event/concept/item/creature), `tier` (1, 2, or 3). It
    returns only a one-line summary (count written, any `dropped` and why). The entry text does not
    pass back through the orchestrator.
-3. To avoid cross-entry **key collisions** between independently-written batches, give every
-   writer the rule that keys must be specific to their entity (writing-style.md §Key rule 5); the
-   orchestrator catches any residual collisions from the build lint in Phase 5, not by reading
-   fragments.
+3. Writers key each entry to its own entity (writing-style.md §Key rule 5). Shared keys between
+   independently-written batches are expected and usually fine — linked entities surfacing together
+   is a feature, so there's no need to coordinate keys across writers. The build lint in Phase 5
+   flags only the narrow case of a common word shared by (often unrelated) entries.
 4. The orchestrator sets the top-level `name` and `description` (it is not in any fragment):
    `name` follows `"The World of <Universe>"` or the universe's own styling (e.g.
    `"The Fantasy World of Adolion"`); `description` is 1–2 sentences stating coverage and canon scope.
@@ -253,8 +253,10 @@ The orchestrator never writes entry prose in this phase — it dispatches and me
    ```
 
 2. Read the script's stdout (this is cheap — read it directly). Fix every ERROR (rerun until
-   clean). Triage every WARN against writing-style.md: oversized entries get trimmed, risky keys
-   replaced or justified, shared keys disambiguated (§Key rule 5).
+   clean). Triage every WARN against writing-style.md: oversized entries (tier token-cap
+   violations) are the priority fix, and risky keys get replaced or justified. Shared-key warnings
+   are low priority — only disambiguate when a common word is shared by genuinely unrelated entries
+   (§Key rule 5); natural overlap between related entries is fine and can stay.
 3. Apply fixes by dispatching a subagent (active model, no `model` override) with the specific
    warnings and the affected
    fragment file paths — it edits the fragments in place and returns a one-line summary. Then

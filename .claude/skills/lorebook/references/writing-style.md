@@ -65,10 +65,13 @@ into a 512-token shared budget, and its text must read as neutral world-fact to 
    "guild" in a story with one unrelated guild) fire on unrelated chat. Use them only when the
    word overwhelmingly means this entity in this universe (e.g. "Guild" is fine when the
    Adventurer's Guild is the only guild). Prefer two-word keys when a single word is risky.
-5. **No overlap between different entries' keys.** Two entries sharing the key "Shadow" will both
-   fire and double-spend the budget. If a name collision is real in canon (two characters named
-   Alex), disambiguate with multi-word keys ("Alex Mercer", "Alex Chen") and drop the bare name,
-   or keep the bare name only on the more prominent one.
+5. **Shared keys are fine — even useful.** Two entries firing on the same key (a character and the
+   arc they anchor, an item and the creature that drops it) is natural; linked things *should*
+   surface together, and the extra coverage is usually a feature, not a bug. The only real problem
+   is a *common word* shared by genuinely unrelated entries (two unconnected entries both keyed on
+   "Shadow"), which double-spends budget on a false trigger. For a true canonical name collision
+   (two characters named Alex), disambiguate with multi-word keys ("Alex Mercer", "Alex Chen") and
+   drop the bare name, or keep the bare name only on the more prominent one.
 6. **Substring traps.** Keys match as words, but watch aliases that are substrings of common words
    or of other keys ("Ada" inside "Adalbert") — prefer the longer form.
 

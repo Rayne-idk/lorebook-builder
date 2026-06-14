@@ -169,9 +169,15 @@ def lint_entries(entries: list[dict]) -> list[str]:
         for kl in set(lowered):
             key_owners.setdefault(kl, []).append(name)
 
+    # Shared keys are expected and usually fine — linked entities surfacing
+    # together is a feature, not a bug. Only flag the narrow false-trigger case:
+    # a common word shared by multiple (often unrelated) entries.
     for k, owners in key_owners.items():
-        if len(owners) > 1:
-            warnings.append(f"key '{k}' is shared by multiple entries: {owners}")
+        if len(owners) > 1 and k in RISKY_KEYS:
+            warnings.append(
+                f"common word '{k}' is shared by multiple entries {owners} "
+                f"and may false-trigger; consider a more specific key on the less-central one"
+            )
     return warnings
 
 

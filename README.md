@@ -21,7 +21,7 @@ a long time to finish. Keep this in mind before pointing it at a huge, long-runn
 With the current version of the skill, a full run (example:
 [`example-results/haiku.solo-leveling.lorebook.json`](example-results/haiku.solo-leveling.lorebook.json))
 used about 25% of a Claude Code Pro subscription's 5-hour usage budget, using Haiku as the
-model. Using Sonnet or even Opus will probably result in over 100% usage.
+model. Using Sonnet resulted in 142% usage. You can compare the lorebooks they produced in `example-results/`.
 
 ## Requirements
 
